@@ -627,6 +627,75 @@ footer .official a { color: var(--aqua); text-decoration: none; overflow-wrap: a
 .an-link:hover .arr { transform: translateX(4px); }
 @media (max-width: 520px) { .an-cta { padding: 14px; } .an-cta .an-txt { font-size: 13.5px; } }
 
+/* ===== monthly calendar (year × month) ===== */
+.cal-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.cal-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.cal-chip { --c: #2EE6D6; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 10%, transparent); color: var(--ink); font: 700 13px/1.1 inherit; font-family: inherit; cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
+.cal-chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); flex: none; }
+.cal-chip:hover { transform: translateY(-1px); box-shadow: 0 0 16px -4px var(--c); }
+.cal-chip[aria-selected="true"] { background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 55%, #1E3A8A)); color: #03142E; border-color: transparent; box-shadow: 0 0 22px -4px var(--c), inset 0 1px 0 rgba(255,255,255,.5); }
+.cal-chip[aria-selected="true"] .dot { background: #03142E; box-shadow: none; }
+.cal-chip.ov { --c: #7DD3FC; }
+.cal-chip.ov svg { width: 14px; height: 14px; flex: none; }
+.cal-seg { display: inline-flex; padding: 3px; border-radius: 999px; border: 1px solid var(--line); background: var(--glass); }
+.cal-seg button { border: 0; background: none; color: var(--mute); font: 700 12.5px/1 inherit; font-family: inherit; padding: 7px 13px; border-radius: 999px; cursor: pointer; }
+.cal-seg button.on { background: linear-gradient(135deg, #2EE6D6, #3FA9FF); color: #03142E; }
+.cal-seg[hidden] { display: none; }
+.cal-wrap { position: relative; container-type: inline-size; }
+.cal { display: grid; grid-template-columns: 40px repeat(12, minmax(0, 1fr)) 76px; gap: 5px; }
+.cal .h { font-size: 12px; font-weight: 700; color: var(--mute); text-align: center; padding-bottom: 2px; letter-spacing: .02em; }
+.cal .h.yrh { color: #2EE6D6; }
+.cal .yl { display: flex; align-items: center; font: 700 13px/1 'JetBrains Mono', monospace; color: var(--mute); }
+.cal .c { position: relative; height: 46px; border-radius: 9px; border: 0; padding: 0 2px; display: grid; place-items: center; font: 700 clamp(8.5px, 1.35cqi, 14px)/1 'JetBrains Mono', monospace; color: #F4FBFF; cursor: pointer; letter-spacing: -.02em; transition: transform .15s ease, box-shadow .2s ease; font-variant-numeric: tabular-nums; }
+.cal .c:hover { transform: scale(1.07); z-index: 2; }
+.cal .c.na { background: rgba(140,180,255,.05); cursor: default; }
+.cal .c.na:hover { transform: none; }
+.cal .c.cur { box-shadow: 0 0 0 2px var(--sc), 0 0 14px -2px var(--sc); }
+.cal .c.sel { box-shadow: 0 0 0 2.5px #fff, 0 0 18px 2px rgba(46,230,214,.75); transform: scale(1.1); z-index: 3; }
+.cal .c .star { position: absolute; top: 2px; right: 4px; font-size: 9px; color: #FDE047; text-shadow: 0 0 6px rgba(253,224,71,.9); line-height: 1; }
+.cal .yt { height: 46px; border-radius: 9px; display: grid; place-items: center; font: 800 13.5px/1 'JetBrains Mono', monospace; background: rgba(140,180,255,.07); border: 1px solid var(--line); }
+.cal .yt.pos { color: #4ADE80; } .cal .yt.neg { color: #FB7185; }
+.cal-pop { position: absolute; z-index: 6; min-width: 170px; padding: 10px 13px; border-radius: 12px; background: rgba(5,16,38,.97); border: 1px solid rgba(125,227,255,.35); box-shadow: 0 16px 34px -14px rgba(0,0,0,.9); pointer-events: none; }
+.cal-pop .t { font-weight: 800; font-size: 14px; margin-bottom: 4px; }
+.cal-pop .s { font-size: 12px; color: var(--mute); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.cal-pop .s i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.cal-pop .v { font: 800 18px/1.1 'JetBrains Mono', monospace; }
+.cal-pop .v.pos { color: #4ADE80; } .cal-pop .v.neg { color: #FB7185; }
+.cal-pop .a { font: 600 12.5px/1.3 'JetBrains Mono', monospace; color: var(--ink); margin-top: 3px; }
+.cal-pop .b { margin-top: 6px; font-size: 11.5px; color: #FDE047; }
+.cal-yrs { display: none; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+.cal-yrs .lb { font-size: 12.5px; color: var(--mute); margin-right: 2px; }
+.cal-yrs .yp { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--glass); font: 600 12.5px/1 'JetBrains Mono', monospace; color: var(--mute); }
+.cal-yrs .yp b.pos { color: #4ADE80; } .cal-yrs .yp b.neg { color: #FB7185; }
+.cal-foot { margin-top: 16px; display: grid; gap: 8px; }
+.cal-key { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--mute); }
+.cal-key .k { display: inline-flex; align-items: center; gap: 6px; }
+.cal-key .sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.cal-key .sw.lo { background: #FB7185; } .cal-key .sw.hi { background: #4ADE80; }
+.cal-key .sw.cur { background: transparent; box-shadow: inset 0 0 0 2px #2EE6D6; }
+.cal-key .star { font-style: normal; color: #FDE047; }
+.cal-note { font-size: 12px; color: var(--mute); opacity: .85; }
+@container (max-width: 560px) {
+  .cal { grid-template-columns: 26px repeat(12, minmax(0, 1fr)); gap: 2px; }
+  .cal .yt, .cal .h.yrh { display: none; }
+  .cal .h { font-size: 9.5px; letter-spacing: 0; }
+  .cal .yl { font-size: 10px; }
+  .cal .c { height: 34px; border-radius: 5px; padding: 0; letter-spacing: -.05em; font-family: 'Manrope', 'Inter', sans-serif; font-weight: 800; }
+  .cal .c .star { top: 1px; right: 1px; font-size: 7px; }
+}
+@media (max-width: 600px) { .cal-yrs { display: flex; } .cal-top { gap: 10px; } .cal-chip { padding: 7px 11px; font-size: 12px; } }
+html[data-bw-theme="day"] .cal .c { color: #052E16; }
+html[data-bw-theme="day"] .cal .c.neg { color: #4C0519; }
+html[data-bw-theme="day"] .cal .c.na { background: rgba(14,90,140,.06); }
+html[data-bw-theme="day"] .cal .c.sel { box-shadow: 0 0 0 2.5px #0B2545, 0 0 16px 2px rgba(3,105,161,.5); }
+html[data-bw-theme="day"] .cal .yt { background: rgba(255,255,255,.75); border-color: rgba(14,90,140,.18); }
+html[data-bw-theme="day"] .cal .yt.pos, html[data-bw-theme="day"] .cal-yrs .yp b.pos, html[data-bw-theme="day"] .cal-pop .v.pos { color: #15803D; }
+html[data-bw-theme="day"] .cal .yt.neg, html[data-bw-theme="day"] .cal-yrs .yp b.neg, html[data-bw-theme="day"] .cal-pop .v.neg { color: #BE123C; }
+html[data-bw-theme="day"] .cal .h.yrh { color: #0E7490; }
+html[data-bw-theme="day"] .cal-pop { background: #FFFFFF; border-color: rgba(14,90,140,.3); box-shadow: 0 16px 30px -14px rgba(14,90,140,.55); }
+html[data-bw-theme="day"] .cal-chip:not([aria-selected="true"]) { color: #0B2545; background: rgba(255,255,255,.8); }
+html[data-bw-theme="day"] .cal .c .star { color: #CA8A04; text-shadow: none; }
+
 /* public copy: name + toggle on top row, tabs centred below */
 .nav .wrap { flex-wrap: wrap; }
 .nav .brand { order: 1; }
@@ -774,12 +843,23 @@ html[data-bw-theme="day"] .sn-burger span { background: #0E7490; box-shadow: non
   <div class="sec-head">
     <span class="eyebrow"><span class="zone">The abyss · 4,000 m+</span> &nbsp;·&nbsp; Monthly PNL Calendar</span>
     <h2>Month after month</h2>
-    <p class="lede">Each square is one backtest month: green made money, red lost it, and brighter means a bigger move. The rings show the share of months that ended in profit.</p>
+    <p class="lede">Pick a strategy to see its backtest as a calendar. The number in each box is that month’s return on capital: green made money, red lost it. Tap any month for the full figure. The rings show the share of months that ended in profit.</p>
   </div>
   <div class="two">
-    <div class="panel">
+    <div class="panel cal-panel">
+      <div class="cal-top">
+        <div class="cal-chips" id="cal-chips" role="tablist" aria-label="Choose a strategy"></div>
+        <div class="cal-seg" id="cal-mode" role="group" aria-label="Show values as"><button type="button" data-m="pct" class="on" aria-pressed="true">%</button><button type="button" data-m="amt" aria-pressed="false">Amount</button></div>
+      </div>
+      <div class="cal-view" id="cal-view">
+        <div class="cal-wrap" id="cal-wrap"><div class="cal" id="cal" role="grid"></div><div class="cal-pop" id="cal-pop" hidden></div></div>
+        <div class="cal-yrs" id="cal-yrs"></div>
+        <div class="cal-foot"><div class="cal-key"><span class="k"><i class="sw lo"></i>Loss</span><span class="k"><i class="sw hi"></i>Profit</span><span class="k">brighter = bigger month</span><span class="k"><i class="star">★</i>best month</span><span class="k"><i class="sw cur"></i>latest month</span></div><div class="cal-note" id="cal-note"></div></div>
+      </div>
+      <div class="cal-ov" id="cal-ov" hidden>
       <div class="heat-wrap" id="heat-wrap"><div class="heat" id="heat"></div></div>
       <div class="jr-bar heat-bar" id="heat-bar" hidden><button class="tbl-nav prev" type="button" aria-label="Scroll left" id="heat-prev">‹</button><div class="trk"><div class="thb"></div></div><button class="tbl-nav next" type="button" aria-label="Scroll right" id="heat-next">›</button></div>
+      </div>
     </div>
     <div class="panel">
       <div class="rings" id="rings"></div>
@@ -1081,6 +1161,102 @@ function drawEquity() {
   });
 })();
 
+/* ---------- monthly calendar: one strategy, years × months ---------- */
+const MONF = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const calState = { i: 0, mode: 'pct', sel: null };
+function calChips() {
+  const box = document.getElementById('cal-chips'); if (!box || box.childElementCount) return;
+  const mk = (label, i, cls, color) => { const b = el('button', 'cal-chip' + (cls ? ' ' + cls : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.dataset.i = i; if (color) b.style.setProperty('--c', color);
+    if (i >= 0) b.append(el('span', 'dot')); else b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>';
+    b.append(document.createTextNode(label)); b.addEventListener('click', () => calPick(i)); return b; };
+  DATA.forEach((s, i) => box.append(mk(s.short, i, '', s.hex)));
+  box.append(mk('All strategies', -1, 'ov'));
+  document.querySelectorAll('#cal-mode button').forEach(b => b.addEventListener('click', () => { calState.mode = b.dataset.m; document.querySelectorAll('#cal-mode button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); drawCal(); }));
+  document.addEventListener('click', e => { const w = document.getElementById('cal-wrap'); if (w && !w.contains(e.target)) calClose(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') calClose(); });
+}
+function calPick(i) {
+  calState.i = i; calState.sel = null;
+  document.querySelectorAll('.cal-chip').forEach(b => b.setAttribute('aria-selected', +b.dataset.i === i ? 'true' : 'false'));
+  const ov = i < 0;
+  document.getElementById('cal-view').hidden = ov; document.getElementById('cal-ov').hidden = !ov; document.getElementById('cal-mode').hidden = ov;
+  if (ov) { drawHeat(); window.dispatchEvent(new Event('resize')); } else drawCal();
+}
+function calClose() { const p = document.getElementById('cal-pop'); if (p) p.hidden = true; if (calState.sel) { calState.sel.classList.remove('sel'); calState.sel = null; } }
+function calText(v, s, mode) {
+  if (mode === 'pct') { const a = Math.abs(v * 100); return (v < 0 ? '−' : '') + (a >= 9.95 ? Math.round(a) : a.toFixed(1)); }
+  const a = Math.abs(v), sg = v < 0 ? '−' : '';
+  if (s.cur === 'INR') return sg + (a >= 1000 ? (a / 1000).toFixed(a >= 9950 ? 0 : 1) + 'k' : Math.round(a));
+  return sg + (a >= 1000 ? (a / 1000).toFixed(1) + 'k' : Math.round(a));
+}
+function calYear(v, s, mode) {
+  const sg = v < 0 ? '−' : '+';
+  if (mode === 'pct') return sg + Math.abs(v * 100).toFixed(1) + '%';
+  const a = Math.abs(v * s.capital);
+  if (s.cur === 'INR') return sg + '₹' + (a >= 100000 ? (a / 100000).toFixed(2) + 'L' : (a / 1000).toFixed(1) + 'k');
+  return sg + '$' + a.toLocaleString('en-US', { maximumFractionDigits: 0 });
+}
+function drawCal() {
+  calChips();
+  const grid = document.getElementById('cal'); if (!grid) return;
+  if (calState.i < 0) return;
+  if (!document.querySelector('.cal-chip[aria-selected]')) document.querySelectorAll('.cal-chip').forEach(b => b.setAttribute('aria-selected', +b.dataset.i === calState.i ? 'true' : 'false'));
+  const s = DATA[calState.i], day = isDay(), mode = calState.mode;
+  calClose();
+  const y0 = +s.months[0].slice(0, 4), y1 = +s.months[s.months.length - 1].slice(0, 4);
+  const scale = Math.max(0.15, Math.min(0.6, Math.max(...s.roi.map(Math.abs)) * 0.55));
+  const kids = [el('div', 'h', '')];
+  MON.forEach(m => kids.push(el('div', 'h', m)));
+  kids.push(el('div', 'h yrh', 'Year'));
+  for (let y = y1; y >= y0; y--) {
+    kids.push(el('div', 'yl', String(y)));
+    for (let m = 1; m <= 12; m++) {
+      const ym = y + '-' + String(m).padStart(2, '0'), k = s.months.indexOf(ym);
+      if (k < 0) { const c = el('div', 'c na'); c.setAttribute('aria-hidden', 'true'); kids.push(c); continue; }
+      const v = s.roi[k], p = s.pnl[k], int = Math.min(1, Math.abs(v) / scale);
+      const c = el('button', 'c ' + (v < 0 ? 'neg' : 'pos')); c.type = 'button'; c.style.setProperty('--sc', s.hex);
+      const a = day ? 0.22 + 0.68 * int : 0.16 + 0.72 * int;
+      c.style.background = v < 0 ? `rgba(${day ? '220,38,38' : '251,113,133'},${a.toFixed(2)})` : `rgba(${day ? '22,163,74' : '74,222,128'},${a.toFixed(2)})`;
+      if (!day && int > 0.75) c.style.color = '#031B0E';
+      if (!day && v < 0 && int > 0.75) c.style.color = '#2A0610';
+      c.append(document.createTextNode(calText(mode === 'pct' ? v : p, s, mode)));
+      const best = ym === s.best[1], cur = ym === s.last_full;
+      if (best) c.append(el('span', 'star', '★'));
+      if (cur) c.classList.add('cur');
+      c.setAttribute('aria-label', `${MONF[m - 1]} ${y}: ${pct(v)} return, P&L ${money(p, s.cur)}${best ? ', best month' : ''}`);
+      const open = () => {
+        const pop = document.getElementById('cal-pop'), w = document.getElementById('cal-wrap');
+        if (calState.sel) calState.sel.classList.remove('sel'); calState.sel = c; c.classList.add('sel');
+        pop.replaceChildren();
+        const sl = el('div', 's'); const dot = el('i'); dot.style.background = s.hex; sl.append(dot, document.createTextNode(s.name));
+        pop.append(el('div', 't', MONF[m - 1] + ' ' + y), sl, el('div', 'v ' + (v < 0 ? 'neg' : 'pos'), (v < 0 ? '' : '+') + pct(v) + ' on capital'), el('div', 'a', 'P&L ' + (p < 0 ? '' : '+') + money(p, s.cur)));
+        if (best) pop.append(el('div', 'b', '★ Best month of the backtest'));
+        if (cur) pop.append(el('div', 'b', 'Latest full month shown'));
+        pop.hidden = false;
+        const cr = c.getBoundingClientRect(), wr = w.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+        let left = cr.left - wr.left + cr.width / 2 - pw / 2; left = Math.max(0, Math.min(wr.width - pw, left));
+        let top = cr.top - wr.top - ph - 8; if (top < 0) top = cr.bottom - wr.top + 8;
+        pop.style.left = left + 'px'; pop.style.top = top + 'px';
+      };
+      c.addEventListener('pointerdown', e => { c._pt = e.pointerType; });
+      c.addEventListener('click', e => { e.stopPropagation(); if (c._pt === 'mouse') { open(); return; } if (calState.sel === c) calClose(); else open(); });
+      c.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') open(); });
+      c.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') calClose(); });
+      c.addEventListener('focus', () => { if (c.matches(':focus-visible') && calState.sel !== c) open(); });
+      kids.push(c);
+    }
+    const yv = (s.years[String(y)] || 0) / s.capital, yt = el('div', 'yt ' + (yv < 0 ? 'neg' : 'pos'));
+    yt.textContent = calYear(yv, s, mode);
+    kids.push(yt);
+  }
+  grid.replaceChildren(...kids);
+  grid.setAttribute('aria-label', s.name + ' monthly returns calendar');
+  const yrs = document.getElementById('cal-yrs'); yrs.replaceChildren(el('span', 'lb', 'Yearly (gross)'));
+  for (let y = y1; y >= y0; y--) { const yv = (s.years[String(y)] || 0) / s.capital; const pp = el('span', 'yp', y + ' '); const b = el('b', yv < 0 ? 'neg' : 'pos', calYear(yv, s, mode)); pp.append(b); yrs.append(pp); }
+  const f = ym => MONF[+ym.slice(5, 7) - 1].slice(0, 3) + ' ' + ym.slice(0, 4);
+  document.getElementById('cal-note').textContent = (mode === 'pct' ? 'Numbers are % return on capital (' + money(s.capital, s.cur) + ')' : 'Numbers are monthly P&L in ' + (s.cur === 'INR' ? '₹ (k = thousand)' : 'US $')) + ' · gross, from the Tradetron backtest report · ' + f(s.months[0]) + ' – ' + f(s.last_full) + '.';
+}
+
 /* ---------- heatmap ---------- */
 function drawHeat() {
   const box = document.getElementById('heat'), sc = box.parentElement;
@@ -1304,7 +1480,7 @@ function drawHeat() {
   track.addEventListener('pointerdown', e => { if (e.target !== track) return; const r = track.getBoundingClientRect(); w.scrollLeft = ((e.clientX - r.left) / r.width) * w.scrollWidth - w.clientWidth / 2; });
 })();
 
-let rz; const redraw = () => { drawEquity(); drawHeat(); };
+let rz; const redraw = () => { drawEquity(); drawHeat(); drawCal(); };
 redraw();
 addEventListener('bw-theme', () => { if (redraw.ready) redraw(); redraw.ready = true; });
 window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(redraw, 150); });
