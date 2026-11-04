@@ -1,14 +1,14 @@
 {
   "name": "BlueWave Algo Journal",
   "short_name": "BlueWave",
-  "description": "Backtest results of BlueWave Algo's four automated options strategies on Tradetron.",
+  "description": "Month-by-month Tradetron backtest journal of BlueWave Algo's automated options strategies.",
   "id": "./",
   "start_url": "./?source=app",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#04183A",
-  "theme_color": "#04183A",
+  "background_color": "#140B2B",
+  "theme_color": "#140B2B",
   "icons": [
     {
       "src": "icon-192.png",
@@ -31,8 +31,28 @@
   ],
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "url": "dashboard.html",
+      "name": "Leaderboard",
+      "url": "./#leaderboard",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "PnL Calendar",
+      "url": "./#calendar",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Strategies",
+      "url": "./#strategies",
       "icons": [
         {
           "src": "icon-192.png",
