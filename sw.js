@@ -1,5 +1,5 @@
 /* BlueWave Algo Journal service worker: fresh pages when online, saved copy when offline */
-const CACHE = 'bluewave-gh-v11';
+const CACHE = 'bluewave-gh-v12';
 const BASE = self.registration.scope;
 const CORE = ['', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'].map(p => BASE + p);
 self.addEventListener('install', e => {

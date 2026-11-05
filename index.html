@@ -529,6 +529,8 @@ html[data-theme="day"] .cal .cc .star { color: #CA8A04; text-shadow: none; }
 .sd-hd p .rs { font-size: 1em; }
 #cal-cur { margin-left: auto; } #cal-cur + .seg { margin-left: 6px; } #cal-cur[hidden] { display: none; } #cal-cur[hidden] + .seg { margin-left: auto; }
 @media (max-width: 899px) { #cal-cur { margin-left: 0; } }
+
+.mstats b .rs { display: block; margin-top: 2px; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -1050,6 +1052,7 @@ function rDiversify() {
   $('corr-note').innerHTML = `Values near <b>0</b> mean two strategies mostly move independently, so a red month in one is often covered by green in another. The average across pairs is <b class="num">${(sum / cnt).toFixed(2)}</b>. Crypto and Nifty strategies trade different markets, which helps.`;
   picker($('mix-chips'), rDiversify);
   const V = view(), sel = V.sel, box = $('mix-chart'), mixOn = !V.single;
+  const S1 = V.single, base = v => S1 ? v / fx(S1) : v, dm = (v, c) => S1 && S1.cur === 'USD' ? dual(S1, base(v), c) : money(v, V.cur, c), dmT = v => S1 && S1.cur === 'USD' ? dualT(S1, base(v)) : money(v, V.cur);
   { const mc = box.closest('.c'); mc.style.setProperty('--c', V.hex); mc.classList.add('selc'); }
   const months = mixOn ? V.months : V.single.months;
   if (!months.length) { box.innerHTML = '<div class="note">These strategies have no backtest months in common.</div>'; $('mix-stats').innerHTML = ''; $('mix-note').innerHTML = ''; return; }
@@ -1068,12 +1071,12 @@ function rDiversify() {
   const mv = e => { const r = g.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, i = Math.max(0, Math.min(months.length - 1, Math.round((x - pl) / (W - pl - 8) * (months.length - 1)))), m = months[i];
     vl.setAttribute('x1', X(i)); vl.setAttribute('x2', X(i)); vl.setAttribute('opacity', 1);
     const mr = mixOn ? V.roi[i] : V.single.roi[V.single.months.indexOf(m)], mpnl = V.pnl[mixOn ? i : V.single.months.indexOf(m)];
-    showTip(`<div class="t">${mlong(m)}</div><div class="row"><b style="margin:0;padding:0">${esc(V.name)}</b><b class="${mr < 0 ? 'neg' : 'pos'}">${pct(mr)}</b></div><div class="row">P&amp;L<b>${money(mpnl, V.cur)}</b></div><div class="row">Total so far<b>${pct(cm[i], 0)}</b></div>` + (mixOn ? sel.map(s => { const rr = s.roi[s.months.indexOf(m)]; return `<div class="row"><i class="sdot" style="background:${s.hex}"></i>${s.short}<b class="${rr < 0 ? 'neg' : 'pos'}">${pct(rr)}</b></div>`; }).join('') : ''), e.clientX, e.clientY); };
+    showTip(`<div class="t">${mlong(m)}</div><div class="row"><b style="margin:0;padding:0">${esc(V.name)}</b><b class="${mr < 0 ? 'neg' : 'pos'}">${pct(mr)}</b></div><div class="row">P&amp;L<b>${dmT(mpnl)}</b></div><div class="row">Total so far<b>${pct(cm[i], 0)}</b></div>` + (mixOn ? sel.map(s => { const rr = s.roi[s.months.indexOf(m)]; return `<div class="row"><i class="sdot" style="background:${s.hex}"></i>${s.short}<b class="${rr < 0 ? 'neg' : 'pos'}">${pct(rr)}</b></div>`; }).join('') : ''), e.clientX, e.clientY); };
   hit.addEventListener('pointermove', mv); hit.addEventListener('pointerdown', mv); hit.addEventListener('pointerleave', e => { if (e.pointerType !== 'mouse') return; vl.setAttribute('opacity', 0); hideTip(); });
   box.replaceChildren(g); drawIn(mp, 50);
   const roi = mixOn ? V.roi : months.map(m => V.single.roi[V.single.months.indexOf(m)]), pnl = mixOn ? V.pnl : V.pnl;
   const up = roi.filter(v => v > 0).length, worst = Math.min(...roi), wi = roi.indexOf(worst), best = Math.max(...roi), bi = roi.indexOf(best), avg = roi.reduce((a, b) => a + b, 0) / roi.length, tot = pnl.reduce((a, b) => a + b, 0);
-  $('mix-stats').innerHTML = `<div><small>Capital</small><b>${money(V.cap, V.cur, true)}</b></div><div><small>Total P&amp;L</small><b class="${tot < 0 ? 'neg' : 'pos'}">${money(tot, V.cur, true)}</b></div><div><small>Winning months</small><b class="pos">${up}/${roi.length}</b></div><div><small>Avg month</small><b class="${avg < 0 ? 'neg' : 'pos'}">${pct(avg)}</b></div><div><small>Toughest month</small><b class="${worst < 0 ? 'neg' : 'pos'}">${pct(worst)}</b><small style="text-transform:none">${ml(months[wi])}</small></div><div><small>Best month</small><b class="pos">${pct(best)}</b><small style="text-transform:none">${ml(months[bi])}</small></div>`;
+  $('mix-stats').innerHTML = `<div><small>Capital</small><b>${dm(V.cap, true)}</b></div><div><small>Total P&amp;L</small><b class="${tot < 0 ? 'neg' : 'pos'}">${dm(tot, true)}</b></div><div><small>Winning months</small><b class="pos">${up}/${roi.length}</b></div><div><small>Avg month</small><b class="${avg < 0 ? 'neg' : 'pos'}">${pct(avg)}</b></div><div><small>Toughest month</small><b class="${worst < 0 ? 'neg' : 'pos'}">${pct(worst)}</b><small style="text-transform:none">${ml(months[wi])}</small></div><div><small>Best month</small><b class="pos">${pct(best)}</b><small style="text-transform:none">${ml(months[bi])}</small></div>`;
   if (!mixOn) { $('mix-note').innerHTML = `<b>Tick 2 or more strategies</b> (or tap a Quick mix) to see them combined. Use − / + to set how many units (multiplier) of each strategy you would run.`; return; }
   const redSingle = sel.map(s => months.filter(m => s.roi[s.months.indexOf(m)] < 0).length), avgRed = redSingle.reduce((a, b) => a + b, 0) / redSingle.length;
   $('mix-note').innerHTML = `<b>${esc(mixName())}</b>: ${up} of ${roi.length} months green. Solid line = your mix, dashed = each strategy alone. Each strategy runs at its own capital × multiplier; results are added together in ₹ (crypto at ₹${FX} per $). ${ml(months[0])} – ${ml(months[months.length - 1])}, months where all selected strategies have backtest data. The mix had <b>${roi.length - up}</b> red months; the selected strategies on their own averaged <b>${avgRed.toFixed(1)}</b>. Based on past backtest months only.`;
