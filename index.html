@@ -1052,7 +1052,9 @@ function rDiversify() {
   $('corr-note').innerHTML = `Values near <b>0</b> mean two strategies mostly move independently, so a red month in one is often covered by green in another. The average across pairs is <b class="num">${(sum / cnt).toFixed(2)}</b>. Crypto and Nifty strategies trade different markets, which helps.`;
   picker($('mix-chips'), rDiversify);
   const V = view(), sel = V.sel, box = $('mix-chart'), mixOn = !V.single;
-  const S1 = V.single, base = v => S1 ? v / fx(S1) : v, dm = (v, c) => S1 && S1.cur === 'USD' ? dual(S1, base(v), c) : money(v, V.cur, c), dmT = v => S1 && S1.cur === 'USD' ? dualT(S1, base(v)) : money(v, V.cur);
+  const S1 = V.single, allC = sel.every(s => s.cur === 'USD'), U0 = DATA.find(s => s.cur === 'USD');
+  const usd = v => S1 ? v / fx(S1) : v / FX;
+  const dm = (v, c) => allC ? dual(U0, usd(v), c) : money(v, V.cur, c), dmT = v => allC ? dualT(U0, usd(v)) : money(v, V.cur);
   { const mc = box.closest('.c'); mc.style.setProperty('--c', V.hex); mc.classList.add('selc'); }
   const months = mixOn ? V.months : V.single.months;
   if (!months.length) { box.innerHTML = '<div class="note">These strategies have no backtest months in common.</div>'; $('mix-stats').innerHTML = ''; $('mix-note').innerHTML = ''; return; }
