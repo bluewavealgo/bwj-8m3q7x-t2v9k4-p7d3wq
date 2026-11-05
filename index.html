@@ -9,6 +9,7 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="BlueWave Algo"><meta property="og:title" content="BlueWave Algo · Strategy Journal"><meta property="og:description" content="Backtest results month by month for BTC HurricaneX, ETH Polar Wave, Nifty Typhoon Shield and Nifty Current Rider. Updated every month."><meta property="og:url" content="https://bluewavealgo.github.io/bwj-8m3q7x-t2v9k4-p7d3wq/"><meta property="og:image" content="https://bluewavealgo.github.io/bwj-8m3q7x-t2v9k4-p7d3wq/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://bluewavealgo.github.io/bwj-8m3q7x-t2v9k4-p7d3wq/og.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="BlueWave">
 <script>try{var t=localStorage.getItem('bw-theme');if(t!=='day'&&t!=='night')t=matchMedia('(prefers-color-scheme: light)').matches?'day':'night';document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='night'}</script>
+<script>if(/tgWebApp/.test(location.hash+location.search)||window.TelegramWebviewProxy)document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>/* BlueWave Algo journal: one-page dashboard. Night = purple glass + orange, Day = warm cream + orange. */
 :root { --f: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; --m: 'JetBrains Mono', ui-monospace, 'DejaVu Sans Mono', monospace; --side-w: 252px; --r: 20px; --ease: cubic-bezier(.2,.75,.2,1); color-scheme: dark; }
@@ -984,6 +985,28 @@ function rJoin() {
   $('tt-list').innerHTML = DATA.map(s => `<div class="tt-row">${slogo(s, 30)}<div><b>${esc(s.short)}</b><small>${mkt(s, 'sm')} capital ${money(s.capital, s.cur, true)}</small></div>${subBtn(s)}</div>`).join('');
 }
 
+/* ---------- Telegram Mini App: full height, matching colours, back button, haptics ---------- */
+const TG = (() => {
+  const w = window.Telegram && window.Telegram.WebApp, on = !!(w && w.initData);
+  const api = { on, depth: 0, tab() {} };
+  if (!on) return api;
+  document.documentElement.classList.add('in-tg');
+  try { w.ready(); w.expand(); if (w.disableVerticalSwipes) w.disableVerticalSwipes(); } catch (e) {}
+  const paint = () => { const c = root.dataset.theme === 'day' ? '#F7F0E6' : '#140B2B'; try { w.setHeaderColor(c); w.setBackgroundColor(c); if (w.setBottomBarColor) w.setBottomBarColor(c); } catch (e) {} };
+  let stored = null; try { stored = localStorage.getItem('bw-theme'); } catch (e) {}
+  if (stored !== 'day' && stored !== 'night' && (w.colorScheme === 'light' || w.colorScheme === 'dark')) root.dataset.theme = w.colorScheme === 'light' ? 'day' : 'night';
+  paint(); addEventListener('bw-theme', paint);
+  const haptic = t => { try { t === 'sel' ? w.HapticFeedback.selectionChanged() : w.HapticFeedback.impactOccurred('light'); } catch (e) {} };
+  w.BackButton.onClick(() => { if (api.depth > 0) history.back(); else go('overview'); });
+  api.tab = name => { haptic('sel'); (api.depth > 0 || name !== 'overview') ? w.BackButton.show() : w.BackButton.hide(); };
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="http"]'); if (a) { e.preventDefault(); e.stopPropagation(); haptic('tap'); /^https:\/\/t\.me\//.test(a.href) ? w.openTelegramLink(a.href) : w.openLink(a.href); return; }
+    if (e.target.closest('.cal-chip,.mix-chip,.st-tile,.pill,.tog,.seg button')) haptic('tap');
+  }, true);
+  ['install-btn', 'install-btn2'].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = 'none'; });
+  return api;
+})();
+
 /* ================= ROUTER ================= */
 const TABS = ['overview', 'strategies', 'leaderboard', 'calendar', 'risk', 'diversify', 'join', 'about'];
 const RENDER = { overview: rOverview, strategies: rStrategies, leaderboard: rLeaderboard, calendar: rCalendar, risk: rRisk, diversify: rDiversify, join: rJoin, about: () => {} };
@@ -996,7 +1019,8 @@ function go(name, push = true) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + name));
   const sec = $('tab-' + name); $('title').innerHTML = sec.dataset.title; $('subtitle').innerHTML = sec.dataset.sub;
   document.querySelectorAll('#nav .nav').forEach(a => { const on = a.dataset.go === name; a.classList.toggle('on', on); if (on) { a.setAttribute('aria-current', 'page'); const p = $('nav-pill'); p.style.transform = `translateY(${a.offsetTop}px)`; p.style.height = a.offsetHeight + 'px'; } else a.removeAttribute('aria-current'); });
-  if (push && location.hash !== '#' + name) history.pushState(null, '', '#' + name);
+  if (push && location.hash !== '#' + name) { history.pushState(null, '', '#' + name); TG.depth++; }
+  TG.tab(name);
   scrollTo({ top: 0 });
   RENDER[name]();
   document.title = (name === 'overview' ? 'BlueWave Algo · Strategy Journal' : sec.dataset.title.replace('&amp;', '&') + ' · BlueWave Algo');
@@ -1005,7 +1029,7 @@ document.addEventListener('click', e => {
   const st = e.target.closest('[data-strat]'); if (st) { e.preventDefault(); SEL = +st.dataset.strat; CUR = null; go('strategies'); return; }
   const a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); go(a.dataset.go); }
 });
-addEventListener('popstate', () => go(location.hash.slice(1), false));
+addEventListener('popstate', () => { TG.depth = Math.max(0, TG.depth - 1); go(location.hash.slice(1), false); });
 let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { const n = CUR; if (!n) return; RENDER[n](); const a = document.querySelector('#nav .nav.on'); if (a) { $('nav-pill').style.transform = `translateY(${a.offsetTop}px)`; } }, 180); });
 
 /* drawer + swipe */
