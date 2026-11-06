@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#140B2B">
 <meta property="og:type" content="website"><meta property="og:site_name" content="BlueWave Algo"><meta property="og:title" content="BlueWave Algo · Strategy Journal"><meta property="og:description" content="Backtest results month by month for BTC HurricaneX, ETH Polar Wave, Nifty Typhoon Shield and Nifty Current Rider. Updated every month."><meta property="og:url" content="https://bluewavealgo.github.io/bwj-8m3q7x-t2v9k4-p7d3wq/"><meta property="og:image" content="https://bluewavealgo.github.io/bwj-8m3q7x-t2v9k4-p7d3wq/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://bluewavealgo.github.io/bwj-8m3q7x-t2v9k4-p7d3wq/og.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="BlueWave">
+<script data-goatcounter="https://bluewavealgo.goatcounter.com/count" data-goatcounter-settings='{"no_onload":true}' async src="//gc.zgo.at/count.js"></script>
 <script>try{var t=localStorage.getItem('bw-theme');if(t!=='day'&&t!=='night')t=matchMedia('(prefers-color-scheme: light)').matches?'day':'night';document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='night'}</script>
 <script>if(/tgWebApp/.test(location.hash+location.search)||window.TelegramWebviewProxy)document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -1113,6 +1114,9 @@ const TG = (() => {
   return api;
 })();
 
+/* private visitor counter (GoatCounter): one count per tab opened */
+function track(name, n = 0) { if (!SW) return; const g = window.goatcounter; if (!g || !g.count) { if (n < 20) setTimeout(() => track(name, n + 1), 500); return; }
+  try { g.count({ path: '/' + name + (TG.on ? '?via=telegram' : ''), title: name }); } catch (e) {} }
 /* ================= ROUTER ================= */
 const TABS = ['overview', 'strategies', 'leaderboard', 'calendar', 'risk', 'diversify', 'join', 'about'];
 const RENDER = { overview: rOverview, strategies: rStrategies, leaderboard: rLeaderboard, calendar: rCalendar, risk: rRisk, diversify: rDiversify, join: rJoin, about: () => {} };
@@ -1129,6 +1133,7 @@ function go(name, push = true) {
   TG.tab(name);
   scrollTo({ top: 0 });
   RENDER[name]();
+  track(name);
   document.title = (name === 'overview' ? 'BlueWave Algo · Strategy Journal' : sec.dataset.title.replace('&amp;', '&') + ' · BlueWave Algo');
 }
 document.addEventListener('click', e => {
